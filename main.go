@@ -20,7 +20,7 @@ var db *sql.DB
 
 func init() {
 	var err error
-	connStr := "postgresql://postgres:ldyvojdy8yaj13rz@brawl-star-db-7hbene:5432/postgres"
+	connStr := "postgresql://postgres:ldyvojdy8yaj13rz@brawl-star-db-7hbene:5432/postgres?sslmode=disable"
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Erreur de connexion DB:", err)
