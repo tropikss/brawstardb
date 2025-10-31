@@ -5,7 +5,103 @@ meta {
 }
 
 post {
-  url: http://100.108.226.114:8000/battle
-  body: none
+  url: http://100.108.226.114:8000/battles
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+          "playerId":"2LGRYGVP",
+          "battleTime":"20251030T111932.000Z",
+           "event":{
+              "id":15001065,
+              "mode":"unknown",
+              "modeId":48,
+              "map":"The Smackdome"
+           },
+           "battle":{
+              "mode":"siege",
+              "type":"ranked",
+              "result":"defeat",
+              "duration":197,
+              "trophyChange":-7,
+              "starPlayer":{
+                 "tag":"#Q2RCV0LL",
+                 "name":"CC | Mattew 🌙",
+                 "brawler":{
+                    "id":16000097,
+                    "name":"MINA",
+                    "power":9,
+                    "trophies":685
+                 }
+              },
+              "teams":[
+                 [
+                    {
+                       "tag":"#PG99CYGYY",
+                       "name":"M8|Myraa 🥷",
+                       "brawler":{
+                          "id":16000079,
+                          "name":"ANGELO",
+                          "power":11,
+                          "trophies":273
+                       }
+                    },
+                    {
+                       "tag":"#2YLY92PUG",
+                       "name":"M8|RayRay 🍀",
+                       "brawler":{
+                          "id":16000047,
+                          "name":"SQUEAK",
+                          "power":11,
+                          "trophies":723
+                       }
+                    },
+                    {
+                       "tag":"#Q2RCV0LL",
+                       "name":"CC | Mattew 🌙",
+                       "brawler":{
+                          "id":16000097,
+                          "name":"MINA",
+                          "power":9,
+                          "trophies":685
+                       }
+                    }
+                 ],
+                 [
+                    {
+                       "tag":"#8UU2QVC08",
+                       "name":"KARIM",
+                       "brawler":{
+                          "id":16000054,
+                          "name":"FANG",
+                          "power":11,
+                          "trophies":832
+                       }
+                    },
+                    {
+                       "tag":"#LC98JJLUQ",
+                       "name":"LV3_Vortex",
+                       "brawler":{
+                          "id":16000001,
+                          "name":"COLT",
+                          "power":11,
+                          "ttrophies":796
+                       }
+                    },
+                    {
+                       "tag":"#2LGRYGVP",
+                       "name":"PurpleYouNoob",
+                       "brawler":{
+                          "id":16000091,
+                          "name":"LUMI",
+                          "power":11,
+                          "trophies":775
+                       }
+                    }
+                 ]
+              ]
+           }
+        },
 }

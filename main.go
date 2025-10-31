@@ -71,7 +71,7 @@ func createBattleTable() {
 		battle_time TEXT,
 		result TEXT,
 		mode TEXT,
-		type TEXT,
+		battle_type TEXT,
 		map TEXT,
 		star_player BOOLEAN,
 		duration INT,
