@@ -65,7 +65,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createBattleTable() {
-	db.Exec(`DROP TABLE IF EXISTS battles`)
+	// db.Exec(`DROP TABLE IF EXISTS battles`)
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS battles (
 		id SERIAL PRIMARY KEY,
 		player_id TEXT,
@@ -90,8 +90,8 @@ func createTable() {
 
 func battleHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	// case "GET":
-	// 	listBattles(w)
+	case "GET":
+		listBattles(w, r)
 	case "POST":
 		addBattle(w, r)
 	default:
@@ -137,4 +137,60 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+func listBattles(w http.ResponseWriter, r *http.Request) {
+	playerID := r.URL.Query().Get("player_id")
+
+	var rows *sql.Rows
+	var err error
+
+	if playerID != "" {
+		rows, err = db.Query(`SELECT result, duration, trophy_change 
+			FROM battles WHERE player_id=$1`, playerID)
+	} else {
+		rows, err = db.Query(`SELECT result, duration, trophy_change FROM battles`)
+	}
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer rows.Close()
+
+	var totalBattles, totalDuration, totalTrophy int
+	wins, defeats, draws := 0, 0, 0
+
+	for rows.Next() {
+		var result string
+		var duration, trophyChange int
+		if err := rows.Scan(&result, &duration, &trophyChange); err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		totalBattles++
+		totalDuration += duration
+		totalTrophy += trophyChange
+
+		switch result {
+		case "victory":
+			wins++
+		case "defeat":
+			defeats++
+		case "draw":
+			draws++
+		}
+	}
+
+	resp := map[string]interface{}{
+		"player_id":      playerID,
+		"total_battles":  totalBattles,
+		"total_duration": totalDuration,
+		"total_trophy":   totalTrophy,
+		"wins":           wins,
+		"defeats":        defeats,
+		"draws":          draws,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
 }
