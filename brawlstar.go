@@ -14,7 +14,8 @@ const (
 	BASE_URL  = "https://api.brawlstars.com/v1"
 )
 
-var playersTag = []string{"2LGRYGVP"}
+var playersName = []string{"Mathis", "Lisandre", "Louca", "Mathilde"}
+var playersTag  = []string{"2LGRYGVP", "2UPCY0VL", "2PGL99UR", "9GY0C2RQ"}
 
 func getPlayer(tag string) (map[string]interface{}, error) {
 	tagEscaped := url.PathEscape(tag)
