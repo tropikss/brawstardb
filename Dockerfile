@@ -8,8 +8,8 @@ COPY . .
 RUN go build -o app .
 
 # Étape finale avec Python
-FROM python:3.11-slim AS python
-WORKDIR /app
+FROM alpine:latest
+RUN apk add --no-cache python3 py3-pip bash
 
 # Copier le binaire Go
 COPY --from=builder /app/app .
