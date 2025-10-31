@@ -10,22 +10,28 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type User struct {
-	PlayerID   string `json:"player_id"`
-	Name string `json:"name"`
+type StarPlayer struct {
+	Tag string `json:"tag"`
+}
+
+type BattleDetail struct {
+	Mode        string     `json:"mode"`
+	BattleType  string     `json:"type"`
+	Result      string     `json:"result"`
+	Duration    int        `json:"duration"`
+	TrophyChange int       `json:"trophyChange"`
+	StarPlayer  StarPlayer `json:"starPlayer"`
+}
+
+type Event struct {
+	Map string `json:"map"`
 }
 
 type Battle struct {
-	PlayerID string `json:"player_id"`
-	BattleTime string `json:"battle_time"`
-	Result    string `json:"result"`
-	Mode string `json:"mode"`
-	Type  string `json:"type"`
-	Map string `json:"map"`
-	StarPlayer bool   `json:"star_player"`
-	Duration int    `json:"duration"`
-	TrophyChange int `json:"trophy_change"`
-	Teams []Team `json:"teams"`
+	PlayerID   string       `json:"playerId"`
+	BattleTime string       `json:"battleTime"`
+	Battle     BattleDetail `json:"battle"`
+	Event      Event        `json:"event"`
 }
 
 var db *sql.DB
@@ -47,7 +53,6 @@ func init() {
 
 func main() {
 	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/users", usersHandler)
 	http.HandleFunc("/battles", battleHandler)
 
 	fmt.Println("Serveur lance sur :8000")
@@ -83,14 +88,13 @@ func battleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func addBattle(w http.ResponseWriter, r *http.Request) {
-	// Décoder l'objet JSON reçu
 	var b Battle
 	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
 
-	// Vérifier si ca existe pas déjà
+	// Vérifie si la battle existe déjà
 	var exists bool
 	err := db.QueryRow(`SELECT EXISTS (
 		SELECT 1 FROM battles WHERE player_id=$1 AND battle_time=$2
@@ -99,20 +103,21 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-
 	if exists {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "already exists"})
 		return
 	}
 
-	result := b.battle.result
-	starplayer := b.battle.star_player.tag == b.PlayerID
+	// Vérifie si le joueur est starPlayer
+	starplayer := b.Battle.StarPlayer.Tag == b.PlayerID
 
+	// INSERT dans la DB
 	_, err = db.Exec(`INSERT INTO battles 
 		(player_id, battle_time, result, mode, battle_type, map, star_player, duration, trophy_change) 
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-		b.playerID, b.battleTime, result, b.battle.mode, b.battle.type, b.event.map, starplayer, b.battle.duration, b.battle.trophyChange)
+		b.PlayerID, b.BattleTime, b.Battle.Result, b.Battle.Mode, b.Battle.BattleType,
+		b.Event.Map, starplayer, b.Battle.Duration, b.Battle.TrophyChange)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -137,52 +142,4 @@ func listBattles(w http.ResponseWriter) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(battles)
-}
-
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		listUsers(w)
-	case "POST":
-		addUser(w, r)
-	default:
-		http.Error(w, "Methode non supportee", http.StatusMethodNotAllowed)
-	}
-}
-
-func listUsers(w http.ResponseWriter) {
-	rows, err := db.Query("SELECT id, name, age FROM users")
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	defer rows.Close()
-
-	var users []User
-	for rows.Next() {
-		var u User
-		rows.Scan(&u.ID, &u.Name, &u.Age)
-		users = append(users, u)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
-}
-
-func addUser(w http.ResponseWriter, r *http.Request) {
-	var u User
-	err := json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	_, err = db.Exec("INSERT INTO users (name, age) VALUES (?, ?)", u.Name, u.Age)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
