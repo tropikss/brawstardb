@@ -110,7 +110,7 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 	starplayer := b.battle.star_player.tag == b.PlayerID
 
 	_, err = db.Exec(`INSERT INTO battles 
-		(player_id, battle_time, result, mode, type, map, star_player, duration, trophy_change) 
+		(player_id, battle_time, result, mode, battle_type, map, star_player, duration, trophy_change) 
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
 		b.playerID, b.battleTime, result, b.battle.mode, b.battle.type, b.event.map, starplayer, b.battle.duration, b.battle.trophyChange)
 	if err != nil {
@@ -123,7 +123,7 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 }
 
 func listBattles(w http.ResponseWriter) {
-	rows, err := db.Query("SELECT id, player_id, battle_time, result, mode, type, map, star_player, duration, trophy_change FROM battles")
+	rows, err := db.Query("SELECT id, player_id, battle_time, result, mode, battle_type, map, star_player, duration, trophy_change FROM battles")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
