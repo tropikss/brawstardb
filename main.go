@@ -64,7 +64,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "API en ligne"})
 }
 
-func battleHandler(w http.ResponseWriter, r *http.Request) {
+func createBattleTable() {
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS battles (
 		id SERIAL PRIMARY KEY,
 		player_id TEXT,
@@ -77,6 +77,17 @@ func battleHandler(w http.ResponseWriter, r *http.Request) {
 		duration INT,
 		trophy_change INT
 	)`)
+	if err != nil {
+		fmt.Println("Erreur creation table battles:", err)
+		return
+	}
+}
+
+func createTable() {
+	createBattleTable()
+}
+
+func battleHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// case "GET":
 	// 	listBattles(w)
