@@ -8,8 +8,8 @@ headers = {
     "Authorization": f"Bearer {API_TOKEN}"
 }
 
-players_name = ['Mathis']
-players_tag = ['2LGRYGVP']
+players_name = ['Mathis', 'Lisandre', 'Louca', 'Mathilde']
+players_tag = ['2LGRYGVP', '2UPCY0VL', '2PGL99UR', '9GY0C2RQ']
 
 
 def post_battle(url, battle_data):
