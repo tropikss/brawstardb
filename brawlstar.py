@@ -8,7 +8,18 @@ headers = {
     "Authorization": f"Bearer {API_TOKEN}"
 }
 
-player_tag = '2LGRYGVP'
+players_name = ['Mathis']
+players_tag = ['2LGRYGVP']
+
+
+def post_battle(url, battle_data):
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=battle_data, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Erreur {response.status_code}: {response.text}")
 
 def get_player(tag):
     tag = tag.replace("#", "%23")
@@ -21,6 +32,13 @@ def get_player(tag):
         return None
 
 if __name__ == "__main__":
-    data = get_player(f"#{player_tag}")
-    if data:
-        print(data)
+    for player_tag in players_tag:
+        data = get_player(f"#{player_tag}")
+        if data:
+            for battle in data['items']:
+                battle['playerId'] = player_tag
+                try:
+                    response = post_battle("http://localhost:8000/battles", battle)
+                    print("Battle posted successfully:", response)
+                except Exception as e:
+                    print("Failed to post battle:", e)
