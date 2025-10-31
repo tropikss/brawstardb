@@ -65,6 +65,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createBattleTable() {
+	db.Exec(`DROP TABLE IF EXISTS battles`)
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS battles (
 		id SERIAL PRIMARY KEY,
 		player_id TEXT,
