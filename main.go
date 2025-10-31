@@ -112,7 +112,7 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 	_, err = db.Exec(`INSERT INTO battles 
 		(player_id, battle_time, result, mode, type, map, star_player, duration, trophy_change) 
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-		b.PlayerID, b.battleTime, result, b.battle.mode, b.battle.type, b.event.map, starplayer, b.battle.duration, b.battle.trophyChange)
+		b.playerID, b.battleTime, result, b.battle.mode, b.battle.type, b.event.map, starplayer, b.battle.duration, b.battle.trophyChange)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
