@@ -78,8 +78,8 @@ func battleHandler(w http.ResponseWriter, r *http.Request) {
 		trophy_change INT
 	)`)
 	switch r.Method {
-	case "GET":
-		listBattles(w)
+	// case "GET":
+	// 	listBattles(w)
 	case "POST":
 		addBattle(w, r)
 	default:
@@ -125,21 +125,4 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-}
-
-func listBattles(w http.ResponseWriter) {
-	rows, err := db.Query("SELECT id, player_id, battle_time, result, mode, battle_type, map, star_player, duration, trophy_change FROM battles")
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	defer rows.Close()
-	var battles []Battle
-	for rows.Next() {
-		var b Battle
-		rows.Scan(&b.ID, &b.PlayerID, &b.BattleTime, &b.Result, &b.Mode, &b.Type, &b.Map, &b.StarPlayer, &b.Duration, &b.TrophyChange)
-		battles = append(battles, b)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(battles)
 }
