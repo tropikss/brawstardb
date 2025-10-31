@@ -6,25 +6,28 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copier le reste du code et compiler le binaire
+# Copier tous les fichiers Go
 COPY . .
-RUN go build -o app .
 
-# Étape finale
+# Compiler le serveur principal
+RUN go build -o server main.go
+
+# Compiler le script brawlstar
+RUN go build -o brawlstar brawlstar.go
+
+# Étape finale : image Alpine légère
 FROM alpine:latest
 WORKDIR /app
 
-# Installer Python et bash
-RUN apk add --no-cache python3 py3-pip bash
+# Installer bash si nécessaire
+RUN apk add --no-cache bash
 
-# Copier le binaire Go
-COPY --from=builder /app/app .
+# Copier les binaires Go compilés
+COPY --from=builder /app/server .
+COPY --from=builder /app/brawlstar .
 
-# Copier ton script Python
-COPY brawlstar.py .
-
-# Exposer le port du serveur Go
+# Exposer le port du serveur
 EXPOSE 8000
 
-# Commande par défaut : lancer le serveur Go
-CMD ["./app"]
+# Lancer le serveur par défaut
+CMD ["./server"]
