@@ -8,7 +8,7 @@ COPY . .
 RUN go build -o app .
 
 # Étape finale avec Python
-FROM python:3.11-slim
+FROM python:3.11-slim AS python
 WORKDIR /app
 
 # Copier le binaire Go
