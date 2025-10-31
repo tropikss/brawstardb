@@ -1,17 +1,22 @@
 FROM golang:1.25.3-alpine AS builder
-FROM python:3.11-slim AS python
-
 WORKDIR /app
 
-# Copier les fichiers du module avant tout
+# Copier et compiler le binaire Go
 COPY go.mod go.sum ./
 RUN go mod download
-
-# Copier le reste du code
 COPY . .
-
-# Compiler le binaire
 RUN go build -o app .
+
+# Étape finale avec Python
+FROM python:3.11-slim
+WORKDIR /app
+
+# Copier le binaire Go
+COPY --from=builder /app/app .
+
+# Copier le script Python
+COPY brawlstar.py .
+
 
 # Étape finale
 FROM alpine:latest
