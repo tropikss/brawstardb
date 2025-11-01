@@ -140,10 +140,19 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 }
 
 func listBattles(w http.ResponseWriter, r *http.Request) {
-	playerID := r.URL.Query().Get("player_id")
+	temp_playerID := r.URL.Query().Get("player_id")
 
 	var rows *sql.Rows
 	var err error
+
+	playerID := temp_playerID
+	if temp_playerID != "" {
+		for name in playersName {
+			if name == temp_playerID {
+				playerID = playersTag[indexOf(name in playersName)]
+				break
+			}
+	}
 
 	if playerID != "" {
 		rows, err = db.Query(`SELECT result, duration, trophy_change 
