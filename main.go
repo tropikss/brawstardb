@@ -149,7 +149,7 @@ func listBattles(w http.ResponseWriter, r *http.Request) {
 	if temp_playerID != "" {
 		for name in playersName {
 			if name == temp_playerID {
-				playerID = playersTag[indexOf(name in playersName)]
+				playerID := playersTag[indexOf(name in playersName)]
 				break
 			}
 	}
