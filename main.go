@@ -10,6 +10,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var playersName = []string{"Mathis", "Lisandre", "Louca", "Mathilde"}
+var playersTag  = []string{"2LGRYGVP", "2UPCY0VL", "2PGL99UR", "9GY0C2RQ"}
+
+
 type StarPlayer struct {
 	Tag string `json:"tag"`
 }
@@ -140,18 +144,19 @@ func addBattle(w http.ResponseWriter, r *http.Request) {
 }
 
 func listBattles(w http.ResponseWriter, r *http.Request) {
-	temp_playerID := r.URL.Query().Get("player_id")
+	tempPlayerID := r.URL.Query().Get("player_id")
 
 	var rows *sql.Rows
 	var err error
 
-	playerID := temp_playerID
-	if temp_playerID != "" {
-		for name in playersName {
-			if name == temp_playerID {
-				playerID := playersTag[indexOf(name in playersName)]
+	playerID := tempPlayerID
+	if tempPlayerID != "" {
+		for i, name := range playersName {
+			if name == tempPlayerID {
+				playerID = playersTag[i]
 				break
 			}
+		}
 	}
 
 	if playerID != "" {
